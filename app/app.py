@@ -6,7 +6,7 @@ import streamlit as st
 # função para carregar o dataset
 @st.cache
 def get_data():
-    return pd.read_csv("../data/populacao.csv")
+    return pd.read_csv("data/populacao.csv")
 
 def load_pacient(paciente):
     paciente_joao = {
