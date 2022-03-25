@@ -76,6 +76,8 @@ def show_data(paciente):
 
     posicao = (1 - (total_menor / total)) * 100
 
+    posicao = round(posicao, 2)
+    
     x = df_total["peso"].value_counts().sort_index().index.values
     y = df_total["peso"].value_counts().sort_index().values
 
@@ -111,6 +113,9 @@ def show_data(paciente):
     total_menor = len(df_menor)
 
     posicao = (1 - (total_menor / total)) * 100
+
+    posicao = round(posicao, 2)
+
 
     x = df_total["altura"].value_counts().sort_index().index.values
     y = df_total["altura"].value_counts().sort_index().values
@@ -148,6 +153,8 @@ def show_data(paciente):
 
     posicao = (1 - (total_menor / total)) * 100
 
+    posicao = round(posicao, 2)
+    
     x = df_total["idade"].value_counts().sort_index().index.values
     y = df_total["idade"].value_counts().sort_index().values
 
