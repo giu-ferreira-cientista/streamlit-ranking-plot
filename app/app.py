@@ -3,10 +3,20 @@ from matplotlib import pyplot as plt
 import matplotlib
 import streamlit as st
 
+
 # função para carregar o dataset
-@st.cache
+@st.cache(allow_output_mutation=True)
 def get_data():
-    return pd.read_csv("data/populacao.csv")
+    # development path 
+    PATH_DEV = '../data'
+    
+    # production path
+    PATH_PROD = 'data'
+
+    # change to match your enviroment
+    ENV_PATH = PATH_PROD
+
+    return pd.read_csv(ENV_PATH + "/populacao.csv")
 
 def load_pacient(paciente):
     paciente_joao = {
@@ -182,8 +192,8 @@ def show_data(paciente):
 
     st.markdown("""<hr style="height:1px;border:none;color:blue;background-color:blue;" /> """, unsafe_allow_html=True)
     
-    # Grafico de Idade
-    imc_usuario = dict_paciente["peso"] / (dict_paciente["altura"] ^ 2)
+    # Grafico de IMC    
+    imc_usuario = int(dict_paciente["peso"] / ((dict_paciente["altura"] / 100) ** 2))
 
     df_menor = df_total[df_total['imc'] < imc_usuario]
 
@@ -198,16 +208,17 @@ def show_data(paciente):
 
     
     max_y = max(y) + 2
-    max_ys = max_y + 3
+    max_ys = max_y + 5
 
     markers_on_x = [imc_usuario]
     markers_on_xs = [imc_usuario]
+    
     markers_on_y = [max_y]
-    markers_on_ys = [max_ys]
+    markers_on_ys = [max_ys]    
 
     fig = plt.figure(figsize = (19, 7))    
-    fig.suptitle(dict_paciente["first_name"] + " é mais jovem do que " + str(posicao) + '% das pessoas', fontsize=20)
-    plt.xlabel("Idade das Pessoas", fontsize=18)
+    fig.suptitle(dict_paciente["first_name"] + " tem o IMC menor do que " + str(posicao) + '% das pessoas', fontsize=20)
+    plt.xlabel("IMC das Pessoas", fontsize=18)
     plt.ylabel("Número de Pessoas", fontsize=18)
     plt.xticks(fontsize=14, rotation=90)
     plt.yticks(fontsize=14, rotation=90)
@@ -216,17 +227,17 @@ def show_data(paciente):
     plt.fill_between(x, y, color='#539ecd')
     df_total['imc'].value_counts().sort_index().plot(kind='line',figsize=(19,7))
     plt.grid()
-
-
-
-
-
+    st.pyplot(fig)
 
 # Carrega o dataframe
 df_total = get_data()
 
 # cria a coluna de IMC (peso/altura^2)
-df_total['imc'] = df_total['peso'] / (df_total['altura'] ^ 2)
+df_total['imc'] = df_total["peso"] / ((df_total["altura"] / 100) ** 2)
+
+#converte pra inteiro
+df_total['imc'] = df_total['imc'].astype(int)
+
 
 # criando a interface no Streamlit
 # título
@@ -267,7 +278,7 @@ btn_show = st.sidebar.button("Mostrar o Ranking")
 # verifica se o botão foi acionado
 if btn_show:
     # pega o nome do paciente 
-    result = desc_paciente(paciente)
+    result = load_pacient(paciente)
 
     st.subheader("O paciente escolhido foi: ")    
     
