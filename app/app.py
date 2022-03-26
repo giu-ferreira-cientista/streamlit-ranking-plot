@@ -180,10 +180,53 @@ def show_data(paciente):
     plt.grid()
     st.pyplot(fig)
 
+    st.markdown("""<hr style="height:1px;border:none;color:blue;background-color:blue;" /> """, unsafe_allow_html=True)
+    
+    # Grafico de Idade
+    imc_usuario = dict_paciente["peso"] / (dict_paciente["altura"] ^ 2)
+
+    df_menor = df_total[df_total['imc'] < imc_usuario]
+
+    total_menor = len(df_menor)
+
+    posicao = (1 - (total_menor / total)) * 100
+
+    posicao = round(posicao, 2)
+    
+    x = df_total["imc"].value_counts().sort_index().index.values
+    y = df_total["imc"].value_counts().sort_index().values
+
+    
+    max_y = max(y) + 2
+    max_ys = max_y + 3
+
+    markers_on_x = [imc_usuario]
+    markers_on_xs = [imc_usuario]
+    markers_on_y = [max_y]
+    markers_on_ys = [max_ys]
+
+    fig = plt.figure(figsize = (19, 7))    
+    fig.suptitle(dict_paciente["first_name"] + " é mais jovem do que " + str(posicao) + '% das pessoas', fontsize=20)
+    plt.xlabel("Idade das Pessoas", fontsize=18)
+    plt.ylabel("Número de Pessoas", fontsize=18)
+    plt.xticks(fontsize=14, rotation=90)
+    plt.yticks(fontsize=14, rotation=90)
+    plt.plot(markers_on_x, markers_on_y, 'v', markersize=30)
+    plt.plot(markers_on_xs, markers_on_ys, 'r', markersize=35, marker='$VOCÊ$')
+    plt.fill_between(x, y, color='#539ecd')
+    df_total['imc'].value_counts().sort_index().plot(kind='line',figsize=(19,7))
+    plt.grid()
+
+
+
+
 
 
 # Carrega o dataframe
 df_total = get_data()
+
+# cria a coluna de IMC (peso/altura^2)
+df_total['imc'] = df_total['peso'] / (df_total['altura'] ^ 2)
 
 # criando a interface no Streamlit
 # título
