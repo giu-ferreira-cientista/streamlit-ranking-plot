@@ -209,6 +209,7 @@ def show_prescription():
     
     imc_usuario = int(dict_paciente["peso"] / ((dict_paciente["altura"] / 100) ** 2))
     idade_usuario = int(dict_paciente["idade"])
+    gestante = int(dict_paciente["gestante"])
     
     st.subheader('IMC – INDICE DE MASSA CORPORAL')
 
@@ -320,17 +321,20 @@ def show_prescription():
 
     st.write(texto_recomendacao) 
 
-    st.subheader('GESTANTES')
+    if(gestante):
+        st.subheader('GESTANTES')
 
-    texto_recomendacao = '''    
-    Antes de executar qualquer exercício, consulte o médico para liberação.\n
-    No primeiro trimestre, para as gestantes que já realizam regularmente exercícios, eles podem ser mantidos. Para as grávidas sedentárias, a recomendação é iniciar as atividades após a 12° semana, evitando riscos de aborto.\n
-    As atividades devem ser de leves a moderadas e podem ser feitas até o parto, ficando atento sempre à intensidade e carga dos exercícios com o avanço da gravidez para não sobrecarregar ainda mais o organismo.\n
-    As atividades recomendadas são: hidroginástica, pilates e ioga. \n
-    Elas irão ajudar na respiração, fortalecer o sistema cardiorrespiratório e evitar dores nas costas que podem começar a aparecer com o peso da barriga. Musculação também poderá ser realizada, porém com orientação.\n
-    '''
+        st.subheader('PACIENTE GESTANTE: SIM')   
 
-    st.write(texto_recomendacao) 
+        texto_recomendacao = '''    
+        Antes de executar qualquer exercício, consulte o médico para liberação.\n
+        No primeiro trimestre, para as gestantes que já realizam regularmente exercícios, eles podem ser mantidos. Para as grávidas sedentárias, a recomendação é iniciar as atividades após a 12° semana, evitando riscos de aborto.\n
+        As atividades devem ser de leves a moderadas e podem ser feitas até o parto, ficando atento sempre à intensidade e carga dos exercícios com o avanço da gravidez para não sobrecarregar ainda mais o organismo.\n
+        As atividades recomendadas são: hidroginástica, pilates e ioga. \n
+        Elas irão ajudar na respiração, fortalecer o sistema cardiorrespiratório e evitar dores nas costas que podem começar a aparecer com o peso da barriga. Musculação também poderá ser realizada, porém com orientação.\n
+        '''
+
+        st.write(texto_recomendacao) 
 
 
 
