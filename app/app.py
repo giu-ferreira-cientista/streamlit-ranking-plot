@@ -367,6 +367,7 @@ cols = st.multiselect("Atributos", defaultcols, default=defaultcols)
 # exibindo os top 10 registro do dataframe
 st.dataframe(df_total[cols].head(10))
 
+st.subheader("Escolha um paciente no menu ao lado...")
 
 st.sidebar.subheader("Escolha um paciente:")
 
