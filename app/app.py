@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 import matplotlib
 import streamlit as st
 import json
+from pycaret.classification import *
 
 # development path 
 PATH_DEV = '../data'
@@ -11,7 +12,7 @@ PATH_DEV = '../data'
 PATH_PROD = 'data'
 
 # change to match your enviroment
-ENV_PATH = PATH_PROD
+ENV_PATH = PATH_DEV
 
 
 # função para carregar o dataset
@@ -205,12 +206,14 @@ def show_data():
     st.pyplot(fig)
 
 
-def show_prescription():
+def show_prescription(dict_paciente):
     
+    st.subheader("Recomendações de saúde para o seu grupo no ranking: ")    
+
     imc_usuario = int(dict_paciente["peso"] / ((dict_paciente["altura"] / 100) ** 2))
     idade_usuario = int(dict_paciente["idade"])
     gestante = int(dict_paciente["gestante"])
-    
+
     st.subheader('IMC – INDICE DE MASSA CORPORAL')
 
     texto_recomendacao = '''    
@@ -219,7 +222,9 @@ def show_prescription():
     '''
     st.write(texto_recomendacao)
  
-    st.subheader("Seu IMC é: " + str(imc_usuario))
+    resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Seu IMC é: ' + str(imc_usuario) +'</p>'
+    st.markdown(resultado_modelo, unsafe_allow_html=True)
+
 
     d = {'IMC (peso/altura²)': ['Menor que 18,5', '18,5 a 24,99', '25 a 29,99', 'Maior que 30'], 'ESTADO NUTRICIONAL': ['Você está com baixo peso!', 'O seu peso está adequado.', 'Alerta: sobrepeso!', 'Alerta: obesidade!']}
     
@@ -324,7 +329,8 @@ def show_prescription():
     if(gestante):
         st.subheader('GESTANTES')
 
-        st.subheader('PACIENTE GESTANTE: SIM')   
+        resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'PACIENTE GESTANTE: SIM' +'</p>'
+        st.markdown(resultado_modelo, unsafe_allow_html=True)
 
         texto_recomendacao = '''    
         Antes de executar qualquer exercício, consulte o médico para liberação.\n
@@ -337,6 +343,104 @@ def show_prescription():
         st.write(texto_recomendacao) 
 
 
+def load_prediction_model(model_path):
+    model = load_model(model_path)
+    return model
+
+# modelo de previsao de HiperTensao
+def model_HT_prediction(model, paciente):
+    
+    # data_teste = pd.DataFrame([paciente])
+    # incluir os campos abaixo no json e testar se o comando acima pega direito os dados
+    
+    data_teste = pd.DataFrame()
+    data_teste['HighBP'] = [1]  
+    data_teste['HighChol'] = [1]
+    data_teste['BMI'] = [31]
+    data_teste['Smoker'] = [1] 
+    data_teste['Stroke'] = [1]
+    data_teste['HeartDiseaseorAttack'] = [1] 
+    data_teste['Fruits'] = [0] 
+    data_teste['Veggies'] = [0]
+    data_teste['HvyAlcoholConsump'] = [1]
+    data_teste['GenHlth'] = [5]
+    data_teste['Sex'] = [1]
+    data_teste['Age'] = [13]
+    data_teste['Drink_alcohol'] = [1]
+    data_teste['Weight_kg'] = [100]
+    data_teste['Systolic_bp'] = [135]
+    data_teste['Diastolic_bp'] = [60]
+    data_teste['Hemoglobin_concentration'] = [32]
+    data_teste['Congestive_heart_failure'] = [0]
+    data_teste['Coronary_heart_disease'] = [0]
+    data_teste['Angina'] = [0]
+    data_teste['Heart_attack'] = [0]
+    data_teste['Relative_heart_attack'] = [1]
+    data_teste['Exercising'] = [0]
+    data_teste['BP_status'] = [1]
+    data_teste['Height_cm'] = [180]
+    
+    #realiza a predição.
+    result = predict_model(model, data=data_teste)
+
+    #recupera os resultados.
+    classe = result["Label"][0]
+    prob = result["Score"][0]*100
+
+    st.subheader("Chance de desenvolver problemas de Hipertensão:")
+    st.write("Executando o modelo de machine learning...")
+    resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Previsão(0=Não/1=Sim): ' + str(classe) +'</p>'
+    precisao_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Precisão do Modelo: ' + str(prob) + '%' +'</p>'
+    st.markdown(resultado_modelo, unsafe_allow_html=True)
+    st.markdown(precisao_modelo, unsafe_allow_html=True)
+
+# Modelo de previsao de Diabetes
+def model_DB_prediction(model, paciente):
+    
+    #data_teste = pd.DataFrame([paciente])
+    # incluir os campos abaixo no json e testar se o comando acima pega direito os dados
+    
+    data_teste = pd.DataFrame()
+    data_teste['HighBP'] = [0]  
+    data_teste['HighChol'] = [0]
+    data_teste['BMI'] = [22]
+    data_teste['Smoker'] = [0] 
+    data_teste['Stroke'] = [0]
+    data_teste['HeartDiseaseorAttack'] = [0] 
+    data_teste['Fruits'] = [1] 
+    data_teste['Veggies'] = [1]
+    data_teste['HvyAlcoholConsump'] = [0]
+    data_teste['GenHlth'] = [3]
+    data_teste['Sex'] = [1]
+    data_teste['Age'] = [35]
+    data_teste['Drink_alcohol'] = [0]
+    data_teste['Weight_kg'] = [80]
+    data_teste['Systolic_bp'] = [130]
+    data_teste['Diastolic_bp'] = [58]
+    data_teste['Hemoglobin_concentration'] = [30]
+    data_teste['Congestive_heart_failure'] = [0]
+    data_teste['Coronary_heart_disease'] = [0]
+    data_teste['Angina'] = [0]
+    data_teste['Heart_attack'] = [0]
+    data_teste['Relative_heart_attack'] = [0]
+    data_teste['Exercising'] = [0]
+    data_teste['BP_status'] = [0]
+    data_teste['Height_cm'] = [175]
+    
+    #realiza a predição.
+    result = predict_model(model, data=data_teste)
+
+    #recupera os resultados.
+    classe = result["Label"][0]
+    prob = result["Score"][0]*100
+
+    st.subheader("Chance de desenvolver problemas de Diabetes:")
+    st.write("Executando o modelo de machine learning...")
+    resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Previsão(0=Não/1=Sim): ' + str(classe) +'</p>'
+    precisao_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Precisão do Modelo: ' + str(prob) + '%' +'</p>'
+    st.markdown(resultado_modelo, unsafe_allow_html=True)
+    st.markdown(precisao_modelo, unsafe_allow_html=True)
+
 
 
 # Carrega os pacientes
@@ -344,6 +448,15 @@ pacientes = get_paciente_data()
 
 # Carrega o dataframe de populacao
 df_total = get_populacao_data()
+
+# Carrega o Modelo de Machine Learning de previsao de diabetes
+DB_model = load_prediction_model(ENV_PATH + '/DB_model')
+exp_clf101 = setup(data = df_total, target = 'peso', use_gpu=False, silent=True)
+
+# Carrega o Modelo de Machine Learning de previsao de diabetes
+HT_model = load_prediction_model(ENV_PATH + '/HT_model')
+exp_clf101 = setup(data = df_total, target = 'peso', use_gpu=False, silent=True)
+
 
 # cria a coluna de IMC (peso/altura^2)
 df_total['imc'] = df_total["peso"] / ((df_total["altura"] / 100) ** 2)
@@ -407,6 +520,10 @@ if btn_show:
     # imprime os graficos do paciente
     show_data()
 
-    st.subheader("Recomendações de saúde para o seu grupo no ranking: ")    
+    # mostra o resultado do modelo de previsao de Hipertensao
+    model_HT_prediction(HT_model, dict_paciente)
+    
+    # mostra o resultado do modelo de previsao de Hipertensao
+    model_DB_prediction(DB_model, dict_paciente)
 
-    show_prescription()
+    show_prescription(dict_paciente)
