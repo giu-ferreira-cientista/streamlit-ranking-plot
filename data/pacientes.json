@@ -1,5 +1,15 @@
 [
-  {
+  24": 16,
+    "fumante": 1,
+    "genetica": 1,
+    "gestante": 0,
+    "frutas": 0,
+    "vegetais": 0,
+    "alcool": 1,
+    "doenca_coracao": 1,
+    "avc": 1,
+    "colesterol_alto": 1,
+    "timestampstr":{
     "id": 1,
     "nome": "joao",
     "idade": 34,
@@ -24,17 +34,7 @@
     "total_sleep_last_24": 2,
     "deep_sleep_last_24": 5,
     "light_sleep_last_24": 3,
-    "awake_last_24": 16,
-    "fumante": 1,
-    "genetica": 1,
-    "gestante": 0,
-    "frutas": 0,
-    "vegetais": 0,
-    "alcool": 1,
-    "doenca_coracao": 1,
-    "avc": 1,
-    "colesterol_alto": 1,
-    "timestampstr": "2022-03-04 07:19:14",
+    "awake_last_ "2022-03-04 07:19:14",
     "timestamp_epoch": "1646378354"
   },
   {
