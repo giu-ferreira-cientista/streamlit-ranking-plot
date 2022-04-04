@@ -12,11 +12,11 @@ PATH_DEV = '../data'
 PATH_PROD = 'data'
 
 # change to match your enviroment
-ENV_PATH = PATH_DEV
+ENV_PATH = PATH_PROD
 
 
 # função para carregar o dataset
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
 def get_populacao_data():
     return pd.read_csv(ENV_PATH + "/populacao.csv")
 
@@ -326,6 +326,33 @@ def show_prescription(dict_paciente):
 
     st.write(texto_recomendacao) 
 
+
+    st.subheader('TAXA METABOLICA BASAL (TMB)')
+
+    texto_recomendacao = '''        
+    É a quantidade de energia necessária para a manutenção das funções vitais do organismo ao longo de 24 horas. É medida em calorias, que é a energia extraída pelo corpo a partir dos micronutrientes que são: carboidratos, proteínas e gorduras totais.\n
+    Não existe taxa metabólica ideal, ela varia de acordo com a idade, sexo, metabolismo e etc.\n\n
+
+    Cálculo:\n
+
+    Taxa de atividade.\n
+    Sedentarismo (pouco ou nenhum exercício) fator -> 1.2\n
+    Levemente ativo (exercícios leves 1 a 3 dias na semana) fator -> 1.375\n
+    Moderadamente ativo (exercício moderado, faz esportes 3 a 5 dias por semana) fator -> 1.55\n
+    Altamente ativo (exercício pesado de 5 a 6 dias por semana) fator -> 1.725\n
+    Extremamente ativo (exercício pesado diariamente e até 2 vezes por dia) fator -> 1.9\n
+    Fórmula para homens: TMB = fator da taxa de atividade x {66 + [(13,7 x Peso(kg)) + ( 5 x Altura(cm)) – (6,8 x Idade(anos))]}\n
+    Fórmula para mulheres: TMB = fator da taxa de atividade x {655 + [(9,6 x Peso(kg)) + (1,8 x Altura(cm)) – (4,7 x Idade(anos))]}\n\n
+
+    HOMEM\n
+    66.5 + (13.75 x kg) + (5.003 x cm) - (6.775 x idade)\n\n
+    MULHER\n
+    655.1 + (9.563 x kg) + (1.850 x cm) - (4.676 x idade)\n
+    '''
+
+
+    st.write(texto_recomendacao) 
+
     if(gestante):
         st.subheader('GESTANTES')
 
@@ -337,7 +364,17 @@ def show_prescription(dict_paciente):
         No primeiro trimestre, para as gestantes que já realizam regularmente exercícios, eles podem ser mantidos. Para as grávidas sedentárias, a recomendação é iniciar as atividades após a 12° semana, evitando riscos de aborto.\n
         As atividades devem ser de leves a moderadas e podem ser feitas até o parto, ficando atento sempre à intensidade e carga dos exercícios com o avanço da gravidez para não sobrecarregar ainda mais o organismo.\n
         As atividades recomendadas são: hidroginástica, pilates e ioga. \n
-        Elas irão ajudar na respiração, fortalecer o sistema cardiorrespiratório e evitar dores nas costas que podem começar a aparecer com o peso da barriga. Musculação também poderá ser realizada, porém com orientação.\n
+        Elas irão ajudar na respiração, fortalecer o sistema cardiorrespiratório e evitar dores nas costas que podem começar a aparecer com o peso da barriga. Musculação também poderá ser realizada, porém com orientação.\n\n
+        Uma alimentação gestacional é de extrema importância tanto para saúde da mãe, como para a do bebê. Contribui para a prevenção de diversas ocorrências negativas durante a gravidez, assegura reservas biológicas necessárias ao parto e pós-parto, garante substrato para o período de lactação, como também, favorece o ganho de peso adequado de acordo com o estado nutricional pré-gestacional.\n
+        Deve conter todos os grupos alimentares existentes, como:\n
+        Vegetais (folhosos e legumes); frutas; carne bovina, frango, fígado (uma vez por semana); ovos e peixes (sardinha, salmão, atum, pescada, cavalinha); leguminosas (feijão, grão de bico, lentilha, ervilha); cereais (arroz integral, batata, milho, entre outros); azeites (de preferência extra virgem); leite e derivados do leite (fora do horário do almoço e jantar).\n
+        As carnes deverão ser assadas, grelhadas, ensopadas ou cozidas, evitando as frituras.\n
+        Recomenda-se não ingerir gordura vegetal hidrogenada, que pode comprometer o crescimento e o desenvolvimento fetal.\n
+        Distribuição das refeições\n
+        As refeições devem ser distribuídas em seis vezes ao dia: \n
+        Desjejum, colação, almoço, lanche, jantar e ceia. \n
+        Os intervalos em média são de três horas entre uma e outra refeição.\n
+        Fonte: Fiocruz\n
         '''
 
         st.write(texto_recomendacao) 
@@ -350,24 +387,23 @@ def load_prediction_model(model_path):
 # modelo de previsao de HiperTensao
 def model_HT_prediction(model, paciente):
     
-    # data_teste = pd.DataFrame([paciente])
-    # incluir os campos abaixo no json e testar se o comando acima pega direito os dados
+    # {"id": 1,  "nome": "joao",  "idade": 34,  "sexo": 0,  "peso": 84,  "altura": 170,  "bpm": 92,  "pressao": 146,  "respiracao": 11,  "temperatura": 37,  "glicemia": 128,  "saturacao_oxigenio": 98,  "estado_atividade": 2,  "dia_de_semana": 1,  "periodo_do_dia": 1,  "semana_do_mes": 2,  "estacao_do_ano": 3,  "passos": 303,  "calorias": 24.24,  "distancia": 378.75,  "tempo": 4.848,  "total_sleep_last_24": 6,  "deep_sleep_last_24": 5,  "light_sleep_last_24": 3,  "awake_last_24": 15,  "fumante": 1,  "genetica": 1,  "gestante": 0,  "frutas": 0,  "vegetais": 0,  "alcool": 1,  "doenca_coracao": 1,  "avc": 1,  "colesterol_alto": 1,  "exercicio": 0,  "timestampstr": "2022-03-20 11:19:28",  "timestamp_epoch": "1647775168"}
     
     data_teste = pd.DataFrame()
-    data_teste['HighChol'] = [1.0]
-    data_teste['BMI'] = [28.0]
-    data_teste['Smoker'] = [1.0] 
-    data_teste['Stroke'] = [1.0]
-    data_teste['Sex'] = [1.0]
-    data_teste['Age'] = [33.0]
-    data_teste['Drink_alcohol'] = [1.0]
-    data_teste['Weight_kg'] = [54.0]
-    data_teste['Systolic_bp'] = [120.0]
-    data_teste['Hemoglobin_concentration'] = [33.0]
-    data_teste['Congestive_heart_failure'] = [0.0]
-    data_teste['Relative_heart_attack'] = [0.0]
-    data_teste['Exercising'] = [0.0]
-    data_teste['Height_cm'] = [165.0]
+    data_teste['HighChol'] = [float(paciente['colesterol_alto'])]
+    data_teste['BMI'] = [float(paciente["peso"]) / ((float(paciente["altura"]) / 100) ** 2)]
+    data_teste['Smoker'] = [float(paciente["fumante"])] 
+    data_teste['Stroke'] = [float(paciente["avc"])]
+    data_teste['Sex'] = [float(paciente["sexo"])]
+    data_teste['Age'] = [float(paciente["idade"])]
+    data_teste['Drink_alcohol'] = [float(paciente["alcool"])]
+    data_teste['Weight_kg'] = [float(paciente["peso"])]
+    data_teste['Systolic_bp'] = [float(paciente["pressao"])]
+    data_teste['Hemoglobin_concentration'] = [float(paciente["glicemia"])]
+    data_teste['Congestive_heart_failure'] = [float(paciente["doenca_coracao"])]
+    data_teste['Relative_heart_attack'] = [float(paciente["genetica"])]
+    data_teste['Exercising'] = [float(paciente["exercicio"])]
+    data_teste['Height_cm'] = [float(paciente["altura"])]
     
 
     #realiza a predição.
@@ -390,21 +426,56 @@ def model_DB_prediction(model, paciente):
     #data_teste = pd.DataFrame([paciente])
     # incluir os campos abaixo no json e testar se o comando acima pega direito os dados
     
-    data_teste = pd.DataFrame()
-    data_teste['HighBP'] = [0]  
-    data_teste['HighChol'] = [0]
-    data_teste['BMI'] = [21]
-    data_teste['Smoker'] = [0] 
-    data_teste['Stroke'] = [1]
-    data_teste['HeartDiseaseorAttack'] = [0] 
-    data_teste['Fruits'] = [1] 
-    data_teste['Veggies'] = [1]
-    data_teste['HvyAlcoholConsump'] = [0]
-    data_teste['Sex'] = [1]
-    data_teste['PhysActivity'] = [1]
-    data_teste['Age'] = [1]
+    # {"id": 1,  "nome": "joao",  "idade": 34,  "sexo": 0,  "peso": 84,  "altura": 170,  "bpm": 92,  "pressao": 146,  "respiracao": 11,  "temperatura": 37,  "glicemia": 128,  "saturacao_oxigenio": 98,  "estado_atividade": 2,  "dia_de_semana": 1,  "periodo_do_dia": 1,  "semana_do_mes": 2,  "estacao_do_ano": 3,  "passos": 303,  "calorias": 24.24,  "distancia": 378.75,  "tempo": 4.848,  "total_sleep_last_24": 6,  "deep_sleep_last_24": 5,  "light_sleep_last_24": 3,  "awake_last_24": 15,  "fumante": 1,  "genetica": 1,  "gestante": 0,  "frutas": 0,  "vegetais": 0,  "alcool": 1,  "doenca_coracao": 1,  "avc": 1,  "colesterol_alto": 1,  "exercicio": 0,  "timestampstr": "2022-03-20 11:19:28",  "timestamp_epoch": "1647775168"}
 
-    print(data_teste)
+    data_teste = pd.DataFrame()
+    if(float(paciente["pressao"]) > 12):
+        high_bp = 1
+    else:
+        high_bp = 0
+
+    if(int(paciente["idade"]) >= 18 and int(paciente["idade"]) <= 24):
+        idade = 1
+    elif(int(paciente["idade"]) >= 25 and int(paciente["idade"]) <= 29):
+        idade = 2
+    elif(int(paciente["idade"]) >= 30 and int(paciente["idade"]) <= 34):
+        idade = 3
+    elif(int(paciente["idade"]) >= 35 and int(paciente["idade"]) <= 39):
+        idade = 4
+    elif(int(paciente["idade"]) >= 40 and int(paciente["idade"]) <= 44):
+        idade = 5
+    elif(int(paciente["idade"]) >= 45 and int(paciente["idade"]) <= 49):
+        idade = 6
+    elif(int(paciente["idade"]) >= 50 and int(paciente["idade"]) <= 54):
+        idade = 7
+    elif(int(paciente["idade"]) >= 55 and int(paciente["idade"]) <= 59):
+        idade = 8
+    elif(int(paciente["idade"]) >= 60 and int(paciente["idade"]) <= 64):
+        idade = 9
+    elif(int(paciente["idade"]) >= 65 and int(paciente["idade"]) <= 69):
+        idade = 10
+    elif(int(paciente["idade"]) >= 70 and int(paciente["idade"]) <= 75):
+        idade = 11
+    elif(int(paciente["idade"]) >= 75 and int(paciente["idade"]) <= 79):
+        idade = 12
+    elif(int(paciente["idade"]) >= 80 and int(paciente["idade"]) <= 99):
+        idade = 13
+    else:
+        idade = 1
+
+    data_teste['HighBP'] = [int(high_bp)]  
+    data_teste['HighChol'] = [int(paciente["colesterol_alto"])]
+    data_teste['BMI'] = [round((float(paciente["peso"]) / (float(paciente["altura"]) / 100) ** 2),0)]
+    data_teste['Smoker'] = [int(paciente["fumante"])] 
+    data_teste['Stroke'] = [int(paciente["avc"])]
+    data_teste['HeartDiseaseorAttack'] = [int(paciente["doenca_coracao"])] 
+    data_teste['Fruits'] = [int(paciente["frutas"])] 
+    data_teste['Veggies'] = [int(paciente["vegetais"])]
+    data_teste['HvyAlcoholConsump'] = [int(paciente["alcool"])]
+    data_teste['Sex'] = [int(paciente["sexo"])]
+    data_teste['PhysActivity'] = [int(paciente["exercicio"])]
+    data_teste['Age'] = [idade]
+    data_teste['Diabetes_012'] = [""]
 
 
     #realiza a predição.
@@ -416,7 +487,7 @@ def model_DB_prediction(model, paciente):
 
     st.subheader("Chance de desenvolver problemas de Diabetes:")
     st.write("Executando o modelo de machine learning...")
-    resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Previsão(0=Não/1=Sim): ' + str(classe) +'</p>'
+    resultado_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Previsão(0=Não/1=Provavelmente Vai Ter/2=Sim): ' + str(classe) +'</p>'
     precisao_modelo = '<p style="font-family:Courier; color:Blue; font-size: 20px;">'+ 'Precisão do Modelo: ' + str(prob) + '%' +'</p>'
     st.markdown(resultado_modelo, unsafe_allow_html=True)
     st.markdown(precisao_modelo, unsafe_allow_html=True)
@@ -456,7 +527,7 @@ st.markdown("Esta é uma Aplicação para que os médicos consultem o estado ger
 st.subheader("Segue uma pequena amostra de pacientes:")
 
 # atributos para serem exibidos por padrão
-defaultcols = ["id","first_name","idade","peso","altura"]
+defaultcols = ["id","nome","idade","peso","altura"]
 
 # defindo atributos a partir do multiselect
 cols = st.multiselect("Atributos", defaultcols, default=defaultcols)
