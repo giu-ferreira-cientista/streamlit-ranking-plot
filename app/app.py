@@ -16,7 +16,7 @@ ENV_PATH = PATH_PROD
 
 
 # função para carregar o dataset
-#@st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def get_populacao_data():
     return pd.read_csv(ENV_PATH + "/populacao.csv")
 
