@@ -578,3 +578,8 @@ if btn_show:
     model_DB_prediction(DB_model, dict_paciente)
 
     show_prescription(dict_paciente)
+
+
+uploaded_file = st.sidebar.file_uploader("Exames do Paciente",type=['png','jpeg', 'pdf'])
+if uploaded_file is not None:
+    file_details = {"FileName":uploaded_file.name,"FileType":uploaded_file.type,"FileSize":uploaded_file.size}
