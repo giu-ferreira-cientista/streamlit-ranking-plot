@@ -7,3 +7,4 @@ Mude o valor da variavel para ENV_PATH = PATH_DEV no arquivo app.py
 $ pip install -r requirements.txt \
 $ cd app \
 $ streamlit run app.py
+
